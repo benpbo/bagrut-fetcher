@@ -18,8 +18,10 @@ def get_bagrut(date: str, subject: str, semester: str, bagrut_id: int, year: int
     print(url)
     res = get(url)
     soup = BeautifulSoup(res.content, 'html.parser')
-    terms = soup.body.find('ul', attrs={'class': 'sub-terms'})
-    single_sub_terms = terms.find_all('li', attrs={'class': 'single-sub-term'})
+    sub_terms = soup.body.find_all('li', 'single-sub-term')
+    sub_term = [sub_term for sub_term in sub_terms if date in sub_term.find('h3').text][0]
+    pdf_items = sub_term.find_all('li', 'pdf-item')
+    bagrut_pdfs = [pdf_item.find_all('a', 'black-btn') for pdf_item in pdf_items if pdf_item.find('div', 'pdf-info').find('span', 'first-line').text == str(bagrut_id)][0]
+    for bagrut_pdf in bagrut_pdfs:
+        print(bagrut_pdf['href'])
 
-    print(type(terms))
-    print(type(single_sub_terms))
